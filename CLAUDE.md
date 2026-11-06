@@ -33,25 +33,34 @@ scripts/package.sh              package one addon (CI + Git Bash)
 .github/workflows/release.yml   release-please, then package + upload per released addon
 ```
 
-## First addon: MinimapCompartment
+## Branding
 
-A standalone replacement for MinimapButtonButton (MBB) that also collects **addon compartment** entries.
+Every addon is named `Ordaen<Name>` (folder, .toc, globals) with TOC title `Ordaen <Name>`, so CurseForge search
+finds them all. One CurseForge project per addon (no pack).
 
-- One movable main button; clicking it toggles a grid "drawer" of buttons.
-- Collects minimap buttons the way MBB does (`_forever_\Interface\AddOns\MinimapButtonButton\Logic\Main.lua` is the reference):
-  LibDBIcon buttons (+ `LibDBIcon_IconCreated` callback), Minimap children whose names match
-  `MinimapButton|MinimapFrame|MinimapIcon|[-_]Minimap[-_]|Minimap$|^LibDBIcon10_`, skipping secure (Blizzard) globals,
-  names ending in digits, and map pins (HandyNotes, TomTom, Questie, GatherMate, ...). Reparent into the drawer, then
-  neutralize `SetPoint/ClearAllPoints/SetParent/SetScale` on the button and position via `UIParent.SetPoint` etc.
-  Defer collecting protected frames in combat.
-- Compartment entries (`AddonCompartmentFrame` exists in Forever):
-  - TOC entries: read `## AddonCompartmentFunc / FuncOnEnter / FuncOnLeave`, `IconTexture`/`IconAtlas`, `Title` via
-    `C_AddOns.GetAddOnMetadata`. Call the globals directly: `Click(addonName, mouseButton, frame)`,
-    `Enter(addonName, frame)`, `Leave(addonName, frame)`. Fall back to a plain title tooltip.
-  - Runtime entries in `AddonCompartmentFrame.registeredAddons` not from a TOC: call
-    `info.func(button, { buttonName = mouseButton }, button)`, `info.funcOnEnter(button, info)`, `info.funcOnLeave(button, info)`.
-  - De-duplicate: if an addon also has a LibDBIcon minimap button that is shown, hide its compartment twin (decide at layout time).
-- Option to hide Blizzard's compartment button (default on). Warn if MBB is also loaded (they would conflict).
-- SavedVariables `MinimapCompartmentDB`: position, columns, scale, grow direction, autoClose, ignore list.
-- Slash command (e.g. `/mc`): reset, columns, scale, list, ignore/unignore.
-- Addons in Forever that use the compartment today: Altoholic, Baganator, Details, DialogueUI, Pawn, Prat.
+## First addon: OrdaenMinimap
+
+Our own specialized take on **SexyMap** (installed reference: `_forever_\Interface\AddOns\SexyMap\`), deliberately with
+little configuration: opinionated defaults instead of option panels. Renamed from MinimapCompartment before its first
+release; the button drawer + addon compartment is one feature of it. Feature scope beyond the drawer is still to be
+decided with the user.
+
+- SavedVariables `OrdaenMinimapDB`; slash `/om` (alias `/ordaenminimap`).
+- Feature: button drawer (replaces MinimapButtonButton, MBB) that also collects **addon compartment** entries.
+  - One main button; clicking it toggles a grid "drawer" of buttons.
+  - Collects minimap buttons the way MBB does (`_forever_\Interface\AddOns\MinimapButtonButton\Logic\Main.lua` is the reference):
+    LibDBIcon buttons (+ `LibDBIcon_IconCreated` callback), Minimap children whose names match
+    `MinimapButton|MinimapFrame|MinimapIcon|[-_]Minimap[-_]|Minimap$|^LibDBIcon10_`, skipping secure (Blizzard) globals,
+    names ending in digits, and map pins (HandyNotes, TomTom, Questie, GatherMate, ...). Reparent into the drawer, then
+    neutralize `SetPoint/ClearAllPoints/SetParent/SetScale` on the button and position via `UIParent.SetPoint` etc.
+    Defer collecting protected frames in combat.
+  - Compartment entries (`AddonCompartmentFrame` exists in Forever):
+    - TOC entries: read `## AddonCompartmentFunc / FuncOnEnter / FuncOnLeave`, `IconTexture`/`IconAtlas`, `Title` via
+      `C_AddOns.GetAddOnMetadata`. Call the globals directly: `Click(addonName, mouseButton, frame)`,
+      `Enter(addonName, frame)`, `Leave(addonName, frame)`. Fall back to a plain title tooltip.
+    - Runtime entries in `AddonCompartmentFrame.registeredAddons` not from a TOC: call
+      `info.func(button, { buttonName = mouseButton }, button)`, `info.funcOnEnter(button, info)`, `info.funcOnLeave(button, info)`.
+    - De-duplicate: if an addon also has a LibDBIcon minimap button that is shown, hide its compartment twin (decide at layout time).
+  - Hide Blizzard's compartment button (default on). Warn if MBB is also loaded (they would conflict).
+  - Drawer settings: columns, grow direction, autoClose, ignore list. Slash: reset, list, ignore/unignore.
+  - Addons in Forever that use the compartment today: Altoholic, Baganator, Details, DialogueUI, Pawn, Prat.

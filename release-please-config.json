@@ -39,13 +39,13 @@
     }
   ],
   "packages": {
-    "addons/MinimapCompartment": {
+    "addons/OrdaenMinimap": {
       "release-type": "simple",
-      "component": "MinimapCompartment",
-      "package-name": "MinimapCompartment",
+      "component": "OrdaenMinimap",
+      "package-name": "OrdaenMinimap",
       "initial-version": "0.1.0",
       "extra-files": [
-        "MinimapCompartment.toc"
+        "OrdaenMinimap.toc"
       ]
     }
   }

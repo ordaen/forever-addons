@@ -1,12 +1,12 @@
 -- Loads an addon file the way WoW does: as a chunk called with (addonName, namespaceTable).
 local function loadAddonFile(path)
 	local ns = {}
-	assert(loadfile(path))("MinimapCompartment", ns)
+	assert(loadfile(path))("OrdaenMinimap", ns)
 	return ns
 end
 
 describe("IsMinimapButtonName", function()
-	local ns = loadAddonFile("addons/MinimapCompartment/Names.lua")
+	local ns = loadAddonFile("addons/OrdaenMinimap/Names.lua")
 
 	it("accepts typical addon minimap button names", function()
 		for _, name in ipairs({

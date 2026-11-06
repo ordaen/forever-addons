@@ -1,5 +1,5 @@
 // Conventional Commits, enforced locally (husky commit-msg hook) and in CI (PR title + PR commits).
-// Scope = addon folder name (e.g. `feat(MinimapCompartment): ...`) or one of the repo-level scopes.
+// Scope = addon folder name (e.g. `feat(OrdaenMinimap): ...`) or one of the repo-level scopes.
 // Note: release-please assigns a commit to an addon by the files it touches, not by its scope.
 import { readdirSync } from 'node:fs';
 

@@ -16,8 +16,9 @@ read_globals = {
 
 -- Globals the addons are allowed to define.
 globals = {
-	"MinimapCompartmentDB",
-	"SLASH_MINIMAPCOMPARTMENT1",
+	"OrdaenMinimapDB",
+	"SLASH_ORDAENMINIMAP1",
+	"SLASH_ORDAENMINIMAP2",
 	"SlashCmdList",
 }
 

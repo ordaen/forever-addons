@@ -4,7 +4,7 @@ World of Warcraft addons for the **WoW Forever** flavor (interface `16001`).
 
 | Addon | Description |
 |---|---|
-| [MinimapCompartment](addons/MinimapCompartment) | Collects minimap buttons and addon compartment entries into one drawer. |
+| [Ordaen Minimap](addons/OrdaenMinimap) | Our own SexyMap-style minimap with little configuration; collects minimap buttons and addon compartment entries into one drawer. |
 
 ## Development
 
@@ -20,13 +20,16 @@ Install BugSack + BugGrabber in game to see Lua errors.
 
 `./scripts/link.ps1 -Unlink` removes the junctions (the files in the repo are not touched).
 
+Run the script from PowerShell 7 (`pwsh`). The older built-in Windows PowerShell 5.1 (`powershell.exe`) refuses
+to run local scripts by default; fix that once with `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+
 ### Commits
 
 [Conventional Commits](https://www.conventionalcommits.org/), checked by a git hook and in CI:
 
 ```
-feat(MinimapCompartment): add grow direction option
-fix(MinimapCompartment): keep drawer on screen after scale change
+feat(OrdaenMinimap): add grow direction option
+fix(OrdaenMinimap): keep drawer on screen after scale change
 chore(ci): cache luarocks
 ```
 
@@ -48,7 +51,7 @@ Handled by [release-please](https://github.com/googleapis/release-please):
 
 Never edit `## Version` in a `.toc` by hand; release-please owns it.
 
-Local package build (Git Bash): `scripts/package.sh MinimapCompartment` → `.release/`.
+Local package build (Git Bash): `scripts/package.sh OrdaenMinimap` → `.release/`.
 
 ### Adding an addon
 

@@ -1,4 +1,4 @@
-package-as: MinimapCompartment
+package-as: OrdaenMinimap
 
 # CHANGELOG.md is written by release-please; ship it instead of a generated git log.
 manual-changelog:

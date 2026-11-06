@@ -1,4 +1,4 @@
--- Pure logic, no WoW API: unit-tested by tests/MinimapCompartment/names_spec.lua.
+-- Pure logic, no WoW API: unit-tested by tests/OrdaenMinimap/names_spec.lua.
 local _, ns = ...
 
 -- Lua patterns have no alternation, so the MBB regex
