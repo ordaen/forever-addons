@@ -5,9 +5,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: write # gh release upload (release-please itself uses the App token)
 
 jobs:
   release-please:
@@ -15,13 +13,21 @@ jobs:
     outputs:
       paths_released: ${{ steps.rp.outputs.paths_released }}
     steps:
+      # The ordaen org does not let GITHUB_TOKEN open PRs, and PRs opened with GITHUB_TOKEN would not
+      # trigger CI anyway. So release-please acts as an org-owned GitHub App
+      # (Contents + Pull requests: read/write), configured via:
+      #   vars.RELEASE_APP_CLIENT_ID, secrets.RELEASE_APP_PRIVATE_KEY
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
       # Opens/updates one "release PR" with version bumps + changelogs; merging it creates the
-      # tags (<Addon>-vX.Y.Z) and GitHub releases. RELEASE_PLEASE_TOKEN (a PAT) is optional but
-      # needed for CI checks to run on release PRs (GITHUB_TOKEN-created PRs don't trigger workflows).
+      # tags (<Addon>-vX.Y.Z) and GitHub releases.
       - uses: googleapis/release-please-action@v5
         id: rp
         with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          token: ${{ steps.app-token.outputs.token }}
 
   package:
     needs: release-please
