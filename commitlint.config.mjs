@@ -1,0 +1,22 @@
+// Conventional Commits, enforced locally (husky commit-msg hook) and in CI (PR title + PR commits).
+// Scope = addon folder name (e.g. `feat(MinimapCompartment): ...`) or one of the repo-level scopes.
+// Note: release-please assigns a commit to an addon by the files it touches, not by its scope.
+import { readdirSync } from 'node:fs';
+
+const addons = readdirSync(new URL('./addons/', import.meta.url), { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name);
+
+const repoScopes = ['repo', 'ci', 'deps', 'scripts', 'tests', 'docs', 'main'];
+
+export default {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'scope-enum': [2, 'always', [...addons, ...repoScopes]],
+    // Addon names are PascalCase.
+    'scope-case': [0],
+    // Bot-written bodies (release-please, dependabot) contain long URLs.
+    'body-max-line-length': [0],
+    'footer-max-line-length': [0],
+  },
+};

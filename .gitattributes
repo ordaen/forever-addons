@@ -1,0 +1,12 @@
+# LF everywhere, regardless of the Windows core.autocrlf setting.
+* text=auto eol=lf
+
+# Binary game assets
+*.blp binary
+*.tga binary
+*.png binary
+*.jpg binary
+*.ogg binary
+*.mp3 binary
+*.ttf binary
+*.zip binary

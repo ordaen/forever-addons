@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  commits:
+    name: Conventional commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # PRs are squash-merged, so the PR title becomes the commit release-please reads.
+      - name: Lint PR title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$TITLE" | npx --no -- commitlint --verbose
+      - name: Lint PR commits
+        run: >
+          npx --no -- commitlint --verbose
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+
+  lua:
+    name: Lint & test (Lua)
+    if: github.event.action != 'edited'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: leafo/gh-actions-lua@v13
+        with:
+          luaVersion: "5.1.5" # the Lua version WoW runs
+      - uses: leafo/gh-actions-luarocks@v6
+      - run: luarocks install luacheck && luarocks install busted
+      - run: luacheck .
+      - run: busted
+
+  package:
+    name: Package (dry run)
+    if: github.event.action != 'edited'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Package every addon (no upload)
+        run: |
+          for dir in addons/*/; do
+            scripts/package.sh "$(basename "$dir")"
+          done
+          ls -l .release/*.zip

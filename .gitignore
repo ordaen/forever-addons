@@ -1,0 +1,7 @@
+node_modules/
+.release/
+.env
+*.zip
+# created locally by leafo/gh-actions-lua when testing workflows with act
+.lua/
+.luarocks/

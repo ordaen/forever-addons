@@ -1,0 +1,55 @@
+# forever-addons
+
+Monorepo of World of Warcraft addons for the **WoW Forever** flavor (interface `16001`).
+Developed on Windows (the user normally works on Linux — explain Windows specifics when relevant).
+
+## Game install
+
+- Forever client: `C:\Program Files (x86)\World of Warcraft\_forever_\`
+- AddOns folder: `C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\`
+- Each addon in `addons/<Name>/` gets a directory junction in the AddOns folder via `scripts/link.ps1` (no admin needed), so edits show after `/reload` in game.
+
+## Decisions so far
+
+- User wants things done properly from the start (full tooling, not "add later").
+- Repo: public GitHub repo `f3oall/forever-addons`. Default branch `main`, squash-merge only, PR title = commit message.
+- Commit identity (global git config): `David Iunevich <1751835+f3oall@users.noreply.github.com>`. GitHub user `f3oall`.
+- Line endings: LF everywhere via `.gitattributes`. On Windows, set the exec bit with `git add --chmod=+x scripts/package.sh`.
+- Commits: Conventional Commits via commitlint (`commitlint.config.mjs`; scope = addon folder name or repo scope), enforced by husky `commit-msg` hook and in CI (PR title + PR commits).
+- Versioning: release-please manifest mode (`release-please-config.json`, `.release-please-manifest.json`), one component per addon, tags `<Addon>-vX.Y.Z`. release-please bumps `## Version` in the TOC via `x-release-please-start-version` block markers — never edit it by hand.
+- Quality: luacheck + busted (pure-logic tests only, Lua 5.1) in CI; manual testing in game with BugSack/BugGrabber. Lua is not installed locally on Windows.
+- Packaging: BigWigs packager (pinned in `scripts/package.sh`). It requires a git repo root as topdir, so the script copies the addon into a temp git repo and tags it. Packager handles CurseForge/Wago uploads; the zip is attached to release-please's GitHub release with `gh release upload` (packager's own GitHub upload would overwrite the release notes). Packager maps interface `16???` to the `forever` flavor (CurseForge game id 88568).
+
+## Layout
+
+```
+addons/<Addon>/                 addon source (.toc, .lua, .pkgmeta)
+tests/<Addon>/*_spec.lua        busted specs (load addon files with loadfile(path)(addonName, ns))
+scripts/link.ps1                create/remove AddOns junctions
+scripts/package.sh              package one addon (CI + Git Bash)
+.github/workflows/ci.yml        commitlint, luacheck, busted, packaging dry run
+.github/workflows/release.yml   release-please, then package + upload per released addon
+```
+
+## First addon: MinimapCompartment
+
+A standalone replacement for MinimapButtonButton (MBB) that also collects **addon compartment** entries.
+
+- One movable main button; clicking it toggles a grid "drawer" of buttons.
+- Collects minimap buttons the way MBB does (`_forever_\Interface\AddOns\MinimapButtonButton\Logic\Main.lua` is the reference):
+  LibDBIcon buttons (+ `LibDBIcon_IconCreated` callback), Minimap children whose names match
+  `MinimapButton|MinimapFrame|MinimapIcon|[-_]Minimap[-_]|Minimap$|^LibDBIcon10_`, skipping secure (Blizzard) globals,
+  names ending in digits, and map pins (HandyNotes, TomTom, Questie, GatherMate, ...). Reparent into the drawer, then
+  neutralize `SetPoint/ClearAllPoints/SetParent/SetScale` on the button and position via `UIParent.SetPoint` etc.
+  Defer collecting protected frames in combat.
+- Compartment entries (`AddonCompartmentFrame` exists in Forever):
+  - TOC entries: read `## AddonCompartmentFunc / FuncOnEnter / FuncOnLeave`, `IconTexture`/`IconAtlas`, `Title` via
+    `C_AddOns.GetAddOnMetadata`. Call the globals directly: `Click(addonName, mouseButton, frame)`,
+    `Enter(addonName, frame)`, `Leave(addonName, frame)`. Fall back to a plain title tooltip.
+  - Runtime entries in `AddonCompartmentFrame.registeredAddons` not from a TOC: call
+    `info.func(button, { buttonName = mouseButton }, button)`, `info.funcOnEnter(button, info)`, `info.funcOnLeave(button, info)`.
+  - De-duplicate: if an addon also has a LibDBIcon minimap button that is shown, hide its compartment twin (decide at layout time).
+- Option to hide Blizzard's compartment button (default on). Warn if MBB is also loaded (they would conflict).
+- SavedVariables `MinimapCompartmentDB`: position, columns, scale, grow direction, autoClose, ignore list.
+- Slash command (e.g. `/mc`): reset, columns, scale, list, ignore/unignore.
+- Addons in Forever that use the compartment today: Altoholic, Baganator, Details, DialogueUI, Pawn, Prat.
