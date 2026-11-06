@@ -12,12 +12,13 @@ ns.Print = Print
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function()
-	MinimapCompartmentDB = MinimapCompartmentDB or {}
+	OrdaenMinimapDB = OrdaenMinimapDB or {}
 	local version = C_AddOns.GetAddOnMetadata(addonName, "Version") or "?"
-	Print("v" .. version .. " loaded. Type /mc for commands.")
+	Print("v" .. version .. " loaded. Type /om for commands.")
 end)
 
-SLASH_MINIMAPCOMPARTMENT1 = "/mc"
-SlashCmdList.MINIMAPCOMPARTMENT = function(msg)
+SLASH_ORDAENMINIMAP1 = "/om"
+SLASH_ORDAENMINIMAP2 = "/ordaenminimap"
+SlashCmdList.ORDAENMINIMAP = function(msg)
 	Print("Hello from", addonName, msg ~= "" and ("(" .. msg .. ")") or "")
 end

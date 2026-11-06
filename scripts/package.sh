@@ -5,7 +5,7 @@
 #
 # The packager only works on the root of a git checkout (it looks for "$topdir/.git"),
 # so in this monorepo we copy the addon into a throwaway git repo first. With a tag
-# (e.g. MinimapCompartment-v1.2.0) the build is a "release" and uploads to CurseForge /
+# (e.g. OrdaenMinimap-v1.2.0) the build is a "release" and uploads to CurseForge /
 # Wago when CF_API_KEY / WAGO_API_TOKEN are set and the TOC has the project IDs.
 # Without a tag it is an alpha build and nothing is uploaded.
 #
@@ -37,12 +37,12 @@ cp -a "$src/." "$repo/"
 	git add -A
 	git -c user.name=packager -c user.email=packager@localhost -c commit.gpgsign=false \
 		commit -qm "${tag:-snapshot}"
-	if [ -n "$tag" ]; then git tag "$tag"; fi
+	if [ -n "$tag" ]; then git -c tag.gpgsign=false tag "$tag"; fi
 )
 
 args=(-t "$repo" -r "$root/.release")
 if [ -n "$tag" ]; then
-	version="${tag##*-v}" # MinimapCompartment-v1.2.0 -> 1.2.0
+	version="${tag##*-v}" # OrdaenMinimap-v1.2.0 -> 1.2.0
 	args+=(-n "{package-name}-$version:$version")
 else
 	args+=(-d) # snapshot: never upload
