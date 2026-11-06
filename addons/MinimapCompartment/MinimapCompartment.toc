@@ -1,0 +1,12 @@
+## Interface: 16001
+## Title: MinimapCompartment
+## Notes: Collects minimap buttons and addon compartment entries into one drawer.
+# The Version line is bumped by release-please; do not edit it by hand.
+# x-release-please-start-version
+## Version: 0.0.0
+# x-release-please-end
+## SavedVariables: MinimapCompartmentDB
+## IconTexture: Interface\Icons\INV_Misc_Bag_10
+
+Names.lua
+Core.lua
