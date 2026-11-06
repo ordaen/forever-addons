@@ -53,13 +53,13 @@ Local package build (Git Bash): `scripts/package.sh MinimapCompartment` → `.re
 ### Adding an addon
 
 1. Create `addons/<Name>/` with `<Name>.toc` (copy the version block markers), `.pkgmeta`, Lua files.
-2. Add it to `release-please-config.json` (`packages`) and `.release-please-manifest.json` (`"0.0.0"`).
+2. Add it to `release-please-config.json` (`packages`, with `"initial-version": "0.1.0"`) and `.release-please-manifest.json` (`"0.0.0"`).
 3. Rerun `./scripts/link.ps1`.
 
 ## Repository secrets
 
 | Secret | Needed for |
 |---|---|
-| `RELEASE_PLEASE_TOKEN` | Fine-grained PAT (contents + pull requests: read/write). Lets CI run on release PRs. |
+| `RELEASE_APP_PRIVATE_KEY` (+ variable `RELEASE_APP_CLIENT_ID`) | Org GitHub App that release-please acts as (Contents + Pull requests: read/write). |
 | `CF_API_KEY` | CurseForge uploads (plus `## X-Curse-Project-ID` in the TOC). |
 | `WAGO_API_TOKEN` | Wago uploads (plus `## X-Wago-ID` in the TOC). |
